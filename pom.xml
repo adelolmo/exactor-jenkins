@@ -13,7 +13,7 @@
 
     <groupId>exactor.jenkins</groupId>
     <artifactId>exactor-jenkins</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>hpi</packaging>
     <description>Creates a URL link to the acceptance report after the Acceptance Framework finishes running.
     </description>
