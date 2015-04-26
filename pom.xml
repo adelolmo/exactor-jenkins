@@ -124,20 +124,6 @@
         </profile>
     </profiles>
 
-    <distributionManagement>
-        <repository>
-            <id>org-mili-repo-releases</id>
-            <name>Maven Repo for org.mili (releases)</name>
-            <url>svn:https://org-mili-repo.googlecode.com/svn/maven-repo/releases</url>
-            <uniqueVersion>false</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-            <id>org-mili-repo-snapshots</id>
-            <name>Maven Repo for org.mili (snapshots)</name>
-            <url>svn:https://org-mili-repo.googlecode.com/svn/maven-repo/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
     <repositories>
@@ -153,4 +139,10 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <scm>
+        <url>git:git@github.com:adelolmo/exactor-jenkins .git</url>
+        <connection>scm:git:git@github.com:adelolmo/exactor-jenkins .git</connection>
+        <developerConnection>scm:git:git@github.com:adelolmo/exactor-jenkins .git</developerConnection>
+    </scm>
 </project>
