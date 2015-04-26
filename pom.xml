@@ -7,12 +7,13 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.509.4</version> <!-- which version of Jenkins is this plugin built against? -->
+        <version>1.509.4</version>
+        <!-- which version of Jenkins is this plugin built against? -->
     </parent>
 
     <groupId>exactor.jenkins</groupId>
     <artifactId>exactor-jenkins</artifactId>
-    <version>1.1.29</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <description>Creates a URL link to the acceptance report after the Acceptance Framework finishes running.
     </description>
@@ -23,6 +24,8 @@
         <maven.compiler.source>1.6</maven.compiler.source>
 
         <version.slf4j>1.7.2</version.slf4j>
+
+        <artifact.dist.name>${project.build.directory}/${project.artifactId}-${project.version}.hpi</artifact.dist.name>
     </properties>
 
     <dependencies>
@@ -76,6 +79,27 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>de.jutzig</groupId>
+                        <artifactId>github-release-plugin</artifactId>
+                        <configuration>
+                            <artifact>${artifact.dist.name}</artifact>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <distributionManagement>
         <repository>

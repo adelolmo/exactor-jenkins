@@ -1,12 +1,27 @@
-package com.exoftware.exactor.jenkins;
+/*
+ *  Copyright 2015 Andoni del Olmo
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.ado.jenkins.exactor;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static junit.framework.Assert.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -22,7 +37,7 @@ public class AcceptanceReportActionTest {
 
     @Before
     public void setUp() throws Exception {
-        this.urlCheckerMock = mock(URLChecker.class);
+        MockitoAnnotations.initMocks(this);
         this.actionFactory = new AcceptanceReportActionFactory(this.urlCheckerMock);
     }
 
@@ -65,9 +80,9 @@ class AcceptanceReportActionFactory {
 
     private URLChecker urlChecker;
     private String reportBasePath = "http://host/";
-    private String reportFileName = "at_report_p1-{0}.html";
+    private String reportFileName = "at_report_p1-265.html";
     private int buildVersion = 265;
-    private String logPath = "\\tmp\\at_out.log";
+    private String logPath = "at_out-265.log";
     private String publishDirectory = "\\Program Files (x86)\\Apache Software Foundation\\Apache2.2\\htdocs\\";
 
     AcceptanceReportActionFactory(URLChecker urlChecker) {
@@ -76,7 +91,7 @@ class AcceptanceReportActionFactory {
 
     public AcceptanceReportAction createAcceptanceReportAction() {
         AcceptanceReportAction acceptanceReportAction = new AcceptanceReportAction(this.reportBasePath, "auth",
-                "", "");
+                reportFileName, logPath);
         acceptanceReportAction.setUrlChecker(this.urlChecker);
         return acceptanceReportAction;
     }

@@ -1,2 +1,2 @@
 #!/bin/sh
-mvnDebug clean package -DskipTests -Djetty.port=8082 hpi:run
+$M2_HOME/bin/mvnDebug clean package -DskipTests -Djetty.port=8080 hpi:run
