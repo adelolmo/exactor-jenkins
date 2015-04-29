@@ -15,6 +15,7 @@
  */
 package org.ado.jenkins.exactor;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -23,6 +24,7 @@ import hudson.model.Job;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.util.LogTaskListener;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * @author Andoni del Olmo
@@ -65,7 +68,7 @@ public class AcceptanceReportPublisher extends Publisher {
         this.project = project;
     }
 
-    private String getReportBaseUrl() {
+    private String getReportBaseUrl(EnvVars envVars) {
         String baseUrl = reportBaseUrl;
         if (LOGGER.isInfoEnabled())
             LOGGER.info("baseUrl[" + baseUrl + "] before");
@@ -75,19 +78,19 @@ public class AcceptanceReportPublisher extends Publisher {
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("baseUrl[" + baseUrl + "] after");
-        return baseUrl;
+        return envVars.expand(baseUrl);
     }
 
-    private String getReportLocation() {
-        return reportLocation;
+    private String getReportLocation(EnvVars envVars) {
+        return envVars.expand(reportLocation);
     }
 
-    private String getLogLocation() {
-        return logLocation;
+    private String getLogLocation(EnvVars envVars) {
+        return envVars.expand(logLocation);
     }
 
-    private String getPublishDirectory() {
-        String publishDirectory = this.publishDirectory;
+    private String getPublishDirectory(EnvVars envVars) {
+        String publishDirectory = envVars.expand(this.publishDirectory);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("publishDirectory[" + publishDirectory + "] before");
 
@@ -107,10 +110,11 @@ public class AcceptanceReportPublisher extends Publisher {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
             throws InterruptedException, IOException {
 
-        String reportBaseUrlParam = getReportBaseUrl();
+        final EnvVars envVars = build.getEnvironment(new LogTaskListener(java.util.logging.Logger.getGlobal(), Level.INFO));
+        String reportBaseUrlParam = getReportBaseUrl(envVars);
         String authCredentials = getAuthCredentials(credentials);
-        String reportLocationParam = getReportLocation();
-        String logLocationParam = getLogLocation();
+        String reportLocationParam = getReportLocation(envVars);
+        String logLocationParam = getLogLocation(envVars);
         int buildNumberParam = getBuildNumber(build);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("perform > reportBaseUrl[" + reportBaseUrlParam
@@ -120,16 +124,14 @@ public class AcceptanceReportPublisher extends Publisher {
                     + "] buildNumber[" + buildNumberParam
                     + "].");
 
-        boolean reportCreated = true;
+        final String reportFileName = getReportFileName(buildNumberParam, envVars);
+        final String logFileName = getLogFileName(buildNumberParam, envVars);
 
-        final String reportFileName = getReportFileName(buildNumberParam);
-        final String logFileName = getLogFileName(buildNumberParam);
-
-        copyReportFile(reportLocationParam, reportFileName);
-        copyLogFile(logLocationParam, logFileName);
+        copyReportFile(reportLocationParam, reportFileName, envVars);
+        copyLogFile(logLocationParam, logFileName, envVars);
 
         build.addAction(new AcceptanceReportAction(reportBaseUrlParam, authCredentials, reportFileName, logFileName));
-        return reportCreated;
+        return true;
     }
 
     private int getBuildNumber(AbstractBuild<?, ?> build) {
@@ -156,38 +158,38 @@ public class AcceptanceReportPublisher extends Publisher {
         }
     }
 
-    private void copyReportFile(String reportFileName, String fileName) {
-        copyFileToPublishDirectory(reportFileName, fileName);
+    private void copyReportFile(String reportFileName, String fileName, EnvVars envVars) {
+        copyFileToPublishDirectory(reportFileName, fileName, envVars);
     }
 
-    private void copyLogFile(String logFileName, String fileName) {
-        copyFileToPublishDirectory(logFileName, fileName);
+    private void copyLogFile(String logFileName, String fileName, EnvVars envVars) {
+        copyFileToPublishDirectory(logFileName, fileName, envVars);
     }
 
-    private void copyFileToPublishDirectory(String srcFile, String fileName) {
+    private void copyFileToPublishDirectory(String srcFile, String fileName, EnvVars envVars) {
+        final String publishDirectory = getPublishDirectory(envVars);
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Copying [" + this.getPublishDirectory() + "] to [" + srcFile + "]...");
-        final File destFile = new File(getPublishDirectory(), fileName);
+            LOGGER.debug("Copying [{}] to [{}]...", publishDirectory, srcFile);
+        final File destFile = new File(publishDirectory, fileName);
         try {
             FileUtils.copyFile(new File(srcFile), destFile, false);
 
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("Copy of [" + srcFile + "] to [" + destFile.getAbsolutePath() + "] was successful.");
+                LOGGER.info("Copy of [{}] to [{}] was successful.", srcFile, destFile.getAbsolutePath());
 
         } catch (IOException e) {
             if (LOGGER.isWarnEnabled())
-                LOGGER.warn("Cannot copy file [" + this.logLocation
-                        + "] to publishing directory [" + destFile.getAbsolutePath()
-                        + "]. Reason: " + e.getMessage() + ".");
+                LOGGER.warn("Cannot copy file [{}] to publishing directory [{}]. Reason: {}.",
+                        logLocation, destFile.getAbsolutePath(), e.getMessage());
         }
     }
 
-    private String getReportFileName(int buildVersion) {
-        return getFileNameWithVersion(reportLocation, buildVersion);
+    private String getReportFileName(int buildVersion, EnvVars envVars) {
+        return getFileNameWithVersion(envVars.expand(reportLocation), buildVersion);
     }
 
-    private String getLogFileName(int buildVersion) {
-        return getFileNameWithVersion(logLocation, buildVersion);
+    private String getLogFileName(int buildVersion, EnvVars envVars) {
+        return getFileNameWithVersion(envVars.expand(logLocation), buildVersion);
     }
 
     private String getFileNameWithVersion(String location, int buildVersion) {
