@@ -15,8 +15,20 @@
     <artifactId>exactor-jenkins</artifactId>
     <version>1.0.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
-    <description>Creates a URL link to the acceptance report after the Acceptance Framework finishes running.
-    </description>
+    <description>Jenkins plugin to expose html reports generated with Exactor</description>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/Exactor-Jenkins</url>
+
+    <developers>
+        <developer>
+            <id>andoni.delolmo (ADO)</id>
+            <name>Andoni del Olmo</name>
+            <email>andoni.delolmo@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,11 +68,6 @@
             <version>2.4</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava-collections</artifactId>
-            <version>r03</version>
-        </dependency>
-        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.8</version>
@@ -87,7 +94,7 @@
                 <plugin>
                     <groupId>de.jutzig</groupId>
                     <artifactId>github-release-plugin</artifactId>
-                    <version>1.1.0</version>
+                    <version>1.1.1</version>
                     <executions>
                         <execution>
                             <phase>install</phase>
@@ -98,13 +105,22 @@
                     </executions>
                     <configuration>
                         <serverId>github</serverId>
-                        <description>First release</description>
+                        <description>Release description here</description>
                         <releaseName>Exactor-Jenkins ${project.version}</releaseName>
                         <tag>exactor-jenkins-${project.version}</tag>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -133,16 +149,16 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>maven.jenkins-ci.org</id>
+            <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 
     <scm>
-        <url>git:git@github.com:adelolmo/exactor-jenkins .git</url>
-        <connection>scm:git:git@github.com:adelolmo/exactor-jenkins .git</connection>
-        <developerConnection>scm:git:git@github.com:adelolmo/exactor-jenkins .git</developerConnection>
+        <url>git:git@github.com:adelolmo/exactor-jenkins.git</url>
+        <connection>scm:git:git@github.com:adelolmo/exactor-jenkins.git</connection>
+        <developerConnection>scm:git:git@github.com:adelolmo/exactor-jenkins.git</developerConnection>
     </scm>
 </project>
