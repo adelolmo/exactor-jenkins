@@ -14,4 +14,15 @@ The above example assumes the build version to be 23.
 
 ## How to configure it
 
-<img src="exactor-jenkins-config.png" width="100%"/>
+<img src="https://raw.githubusercontent.com/adelolmo/exactor-jenkins/gh-pages/images/exactor-jenkins-config.png"/>
+
+## How the build looks like
+
+Exactor-Jenkins creates a permanent entry for every build (success or failure). 
+Two links are added:
+- To the html Exactor exit report.
+- To the logger output file.
+
+<img src="https://raw.githubusercontent.com/adelolmo/exactor-jenkins/gh-pages/images/exactor-jenkins-report.png"/>
+
+If the links aren't reachable by the time the build is open in Jenkins an error will be displayed.
