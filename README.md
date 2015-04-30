@@ -3,7 +3,7 @@ Jenkins plugin to expose html reports generated with [Exactor](https://github.co
 
 ## How does it work
 
-The Exactor Frameword generates an exit html report and probably also an exit log. Exactor-Jenkins will then get those files and copy them to a designated directory exposed by a web server. The copied files will have the build version number attached in the filename, allowing you to archive the reports and pointing to the build number that generated them.
+The Exactor Framework generates an exit html report and probably also an exit log file. Exactor-Jenkins will then get those files and copy them to a designated directory exposed by a web server. You are responsible of providing the web server and Jenkins must have access to it (both writting to disk and via http). The copied files will have the build version number attached in the filename, allowing you to archive the reports and pointing to the build number that generated them.
 
 | What my project with Exactor generates | What Exactor-Jenkins does | Waht the Web Server gets |
 |:------------------------|-----------------|------------|
