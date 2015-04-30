@@ -14,3 +14,4 @@ The above example assumes the build version to be 23.
 
 ## How to configure it
 
+<img src="exactor-jenkins-config.png" width="100%"/>
